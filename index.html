@@ -16,6 +16,8 @@
     <div id='map'></div>
     <script>
         var socket = io();
+        var queue = [];
+        var first = true;
         mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvaGFja2VyIiwiYSI6ImFIN0hENW8ifQ.GGpH9gLyEg0PZf3NPQ7Vrg';
         var map = new mapboxgl.Map({
             container: 'map', // container id
@@ -68,10 +70,19 @@
 
             socket.on('data', function (d) {
                 var feature = JSON.parse(d.data);
+                queue.push(feature);
+                if (first) {
+                    first = false;
+                    map.fire('moveend');
+                }
+            });
+
+            map.on('moveend', function () {
                 var bbox = turf.extent(feature);
                 var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
-                map.fitBounds(bounds);
-                dataSource.setData(JSON.parse(d.data));
+                map.fitBounds(bounds, {linear: true});
+                dataSource.setData(queue[0]);
+                queue.splice(0, 1);
             });
         });
     </script>

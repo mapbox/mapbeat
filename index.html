@@ -4,7 +4,7 @@
     <title>Map Beat</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
-    <script src="http://cdn.socket.io/socket.io-1.4.0.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
     <style>
@@ -15,7 +15,7 @@
 <body>
     <div id='map'></div>
     <script>
-        var socket = io();
+        var socket = io('http://sajjad.in:3000');
         var queue = [];
         var first = true;
         mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvaGFja2VyIiwiYSI6ImFIN0hENW8ifQ.GGpH9gLyEg0PZf3NPQ7Vrg';
@@ -78,11 +78,13 @@
             });
 
             map.on('moveend', function () {
-                var bbox = turf.extent(queue[0]);
-                var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
-                map.fitBounds(bounds, {linear: true});
-                dataSource.setData(queue[0]);
-                queue.splice(0, 1);
+                setTimeout(function () {
+                    var bbox = turf.extent(queue[0]);
+                    var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
+                    map.fitBounds(bounds, {linear: true, maxZoom: 15});
+                    dataSource.setData(queue[0]);
+                    queue.splice(0, 1);
+                }, 2000);
             });
         });
     </script>

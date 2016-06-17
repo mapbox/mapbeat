@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map Beat</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+<body>
+    <div id='map'></div>
+    <script>
+        var socket = io();
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvaGFja2VyIiwiYSI6ImFIN0hENW8ifQ.GGpH9gLyEg0PZf3NPQ7Vrg';
+        var map = new mapboxgl.Map({
+            container: 'map', // container id
+            style: 'mapbox://styles/mapbox/streets-v9', //stylesheet location
+            center: [0, 0], // starting position
+            zoom: 1 // starting zoom
+        });
+        var dataSource = new mapboxgl.GeoJSONSource({});
+
+        var lineLayer = {
+            "id": "line",
+            "type": "line",
+            "source": "data",
+            "layout": {
+                "line-join": "round",
+                "line-cap": "round"
+            },
+            "paint": {
+                "line-color": "#888",
+                "line-width": 8
+            }
+        };
+
+        var pointLayer = {
+            "id": "point",
+            "type": "circle",
+            "source": "data",
+            "paint": {
+                "circle-color": "black",
+                "circle-radius": 10
+            }
+        };
+
+        var polygonLayer = {
+            "id": "polygon",
+            "type": "fill",
+            "source": "data",
+            "layout": {},
+            "paint": {
+                "fill-color": '#088',
+                "fill-opacity": 0.8
+            }
+        };
+
+        map.on('style.load', function () {
+            map.addSource('data', dataSource);
+            map.addLayer(pointLayer);
+            map.addLayer(lineLayer);
+            map.addLayer(polygonLayer);
+
+            socket.on('data', function (d) {
+                dataSource.setData(JSON.parse(d.data));
+            });
+        });
+    </script>
+</body>
+</html>

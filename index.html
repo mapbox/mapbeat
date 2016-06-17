@@ -36,8 +36,8 @@
                 "line-cap": "round"
             },
             "paint": {
-                "line-color": "#888",
-                "line-width": 8
+                "line-color": "black",
+                "line-width": 1
             }
         };
 
@@ -46,8 +46,8 @@
             "type": "circle",
             "source": "data",
             "paint": {
-                "circle-color": "black",
-                "circle-radius": 10
+                "circle-color": "red",
+                "circle-radius": 2
             }
         };
 
@@ -57,16 +57,16 @@
             "source": "data",
             "layout": {},
             "paint": {
-                "fill-color": '#088',
-                "fill-opacity": 0.8
+                "fill-color": '#7337fc',
+                "fill-opacity": 0.5
             }
         };
 
         map.on('style.load', function () {
             map.addSource('data', dataSource);
-            map.addLayer(pointLayer);
-            map.addLayer(lineLayer);
             map.addLayer(polygonLayer);
+            map.addLayer(lineLayer);
+            map.addLayer(pointLayer);
 
             socket.on('data', function (d) {
                 var feature = JSON.parse(d.data);
@@ -81,7 +81,7 @@
                 setTimeout(function () {
                     var bbox = turf.extent(queue[0]);
                     var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
-                    map.fitBounds(bounds, {linear: true, maxZoom: 15});
+                    map.fitBounds(bounds, {linear: true, maxZoom: 17});
                     dataSource.setData(queue[0]);
                     queue.splice(0, 1);
                 }, 2000);

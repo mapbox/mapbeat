@@ -68,7 +68,7 @@
 
             socket.on('data', function (d) {
                 var feature = JSON.parse(d.data);
-                var bbox = turf.bbox(feature);
+                var bbox = turf.extent(feature);
                 var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
                 map.fitBounds(bounds);
                 dataSource.setData(JSON.parse(d.data));

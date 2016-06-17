@@ -78,7 +78,7 @@
             });
 
             map.on('moveend', function () {
-                var bbox = turf.extent(feature);
+                var bbox = turf.extent(queue[0]);
                 var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
                 map.fitBounds(bounds, {linear: true});
                 dataSource.setData(queue[0]);

@@ -5,6 +5,7 @@
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.css' rel='stylesheet' />
     <style>
         body { margin:0; padding:0; }
@@ -66,6 +67,10 @@
             map.addLayer(polygonLayer);
 
             socket.on('data', function (d) {
+                var feature = JSON.parse(d.data);
+                var bbox = turf.bbox(feature);
+                var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
+                map.fitBounds(bounds);
                 dataSource.setData(JSON.parse(d.data));
             });
         });

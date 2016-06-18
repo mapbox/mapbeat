@@ -7,7 +7,7 @@ app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
 app.get('/', function (req, res) {
-  res.sendfile('index.html');
+  res.sendFile(__dirname + '/index.html');
 });
 
 app.post('/', function (req, res) {

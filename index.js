@@ -11,7 +11,7 @@ app.get('/', function (req, res) {
 });
 
 app.post('/', function (req, res) {
-    console.log(req.body);
+    console.log('got data');
     io.emit('data', req.body);
     res.send('done');
 });

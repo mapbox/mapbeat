@@ -1,7 +1,7 @@
 var app = require('express')();
 var bodyParser = require('body-parser');
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var https = require('https').Server(app);
+var io = require('socket.io')(https);
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
@@ -23,6 +23,6 @@ io.on('connection', function (socket) {
   });
 });
 
-http.listen(80, function () {
+https.listen(80, function () {
   console.log('listening on *:80');
 });

@@ -1,4 +1,4 @@
-# [mapbeat](mapbox.com/mapbeat) - OpenStreetMap changes, as they happen.
+# [mapbeat](https://mapbox.com/mapbeat) - OpenStreetMap changes, as they happen.
 
 A [websocket server](https://github.com/mapbox/mapbeat/blob/mb-pages/index.js) that listens to GeoJSON stream of changes in OpenStreetMap and broadcasts to [clients](https://github.com/mapbox/mapbeat/blob/mb-pages/map.js). The clients render this on a [Mapbox GL map](https://github.com/mapbox/mapbeat/blob/mb-pages/index.html).
 

@@ -66,10 +66,13 @@ map.on('style.load', function () {
 
     map.on('moveend', function () {
         setTimeout(function () {
-            var bbox = turf.extent(queue[0]);
+            var f = queue[0];
+            var bbox = turf.extent(f);
+            var time = moment(Number(f.properties['osm:timestamp'])).fromNow();
             var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
             map.fitBounds(bounds, {linear: true, maxZoom: 17});
-            dataSource.setData(queue[0]);
+            $('#description').text(f.properties['osm:user'] + ' edited the map ' + time);
+            dataSource.setData(f);
             queue.splice(0, 1);
         }, 2000);
     });

@@ -66,7 +66,7 @@ map.on('style.load', function () {
 
     socket.on('data', function (d) {
         var feature = JSON.parse(d.data);
-        if (feature.geometry && feature.geometry.type) {
+        if (feature.type && feature.geometry) {
             if (bbox) {
                 if (turf.inside(feature, bbox)) {
                     queue.push(feature);
@@ -85,15 +85,17 @@ map.on('style.load', function () {
     map.on('moveend', function (eventData) {
         if (eventData.hasOwnProperty('mapbeat')) {
             setTimeout(function () {
-                var f = queue[0];
-                var bbox = turf.extent(f);
-                var time = moment(Number(f.properties['osm:timestamp'])).fromNow();
-                var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
-                map.fitBounds(bounds, {linear: true, maxZoom: 17}, {'mapbeat': true});
-                $('.info').removeClass('hidden');
-                $('#description').text(f.properties['osm:user'] + ' edited the map ' + time);
-                dataSource.setData(f);
-                queue.splice(0, 1);
+                if (queue.length) {
+                    var f = queue[0];
+                    var bbox = turf.extent(f);
+                    var time = moment(Number(f.properties['osm:timestamp'])).fromNow();
+                    var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
+                    map.fitBounds(bounds, {linear: true, maxZoom: 17}, {'mapbeat': true});
+                    $('.info').removeClass('hidden');
+                    $('#description').text(f.properties['osm:user'] + ' edited the map ' + time);
+                    dataSource.setData(f);
+                    queue.splice(0, 1);
+                }
             }, 3000);
         }
     });

@@ -59,6 +59,7 @@ map.on('style.load', function () {
             queue.push(feature);
             if (first) {
                 first = false;
+                $('#map').removeClass('loading');
                 map.fire('moveend');
             }
         }
@@ -71,6 +72,7 @@ map.on('style.load', function () {
             var time = moment(Number(f.properties['osm:timestamp'])).fromNow();
             var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
             map.fitBounds(bounds, {linear: true, maxZoom: 17});
+            $('.info').removeClass('hidden');
             $('#description').text(f.properties['osm:user'] + ' edited the map ' + time);
             dataSource.setData(f);
             queue.splice(0, 1);

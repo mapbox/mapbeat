@@ -70,10 +70,12 @@
 
             socket.on('data', function (d) {
                 var feature = JSON.parse(d.data);
-                queue.push(feature);
-                if (first) {
-                    first = false;
-                    map.fire('moveend');
+                if (feature.geometry && feature.geometry.type) {
+                    queue.push(feature);
+                    if (first) {
+                        first = false;
+                        map.fire('moveend');
+                    }
                 }
             });
 

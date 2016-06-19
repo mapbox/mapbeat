@@ -3,6 +3,10 @@
 <head>
     <title>Map Beat</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href='https://www.mapbox.com/base/latest/base.css' rel='stylesheet' />
+    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js'></script>
+    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/URI.js/1.18.1/URI.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.20.0/mapbox-gl.js'></script>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>
@@ -10,10 +14,16 @@
     <style>
         body { margin:0; padding:0; }
         #map { position:absolute; top:0; bottom:0; width:100%; }
+        .info { box-shadow:0 1px 2px rgba(0,0,0,0.20); }
     </style>
 </head>
 <body>
-    <div id='map'></div>
+    <div class='loading' id='map'></div>
+    <div class='pin-topleft pad1 col3'>
+      <div class='fill-white pad2 info round hidden'>
+        <h2 id='description'></h2>
+      </div>
+    </div>
 </body>
 <script type="text/javascript" src="./map.js"></script>
 </html>

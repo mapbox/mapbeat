@@ -11,3 +11,6 @@ A [websocket server](https://github.com/mapbox/mapbeat/blob/mb-pages/index.js) t
 * Start the map - go to index.html in your browser.
 
 
+#### Options
+
+* bbox - xMin, yMin, xMax, yMax - https://mapbox.com/mapbeat/?bbox=55.28,-7.78,108.72,46.17

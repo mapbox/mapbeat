@@ -3,14 +3,25 @@
 var socket = io('https://mapbeat-lambda-staging.tilestream.net:443');
 var queue = [];
 var first = true;
+
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvaGFja2VyIiwiYSI6ImFIN0hENW8ifQ.GGpH9gLyEg0PZf3NPQ7Vrg';
 var map = new mapboxgl.Map({
     container: 'map', // container id
-    style: 'mapbox://styles/mapbox/streets-v9', //stylesheet location
+    style: 'mapbox://styles/mapbox/outdoors-v9', //stylesheet location
     center: [0, 0], // starting position
-    zoom: 1 // starting zoom
+    zoom: 1 // starting zoom,
 });
+
 var dataSource = new mapboxgl.GeoJSONSource({});
+var params = URI.parseQuery(window.location.search);
+var bbox = params.bbox ? getPolygon(params.bbox) : false;
+
+function getPolygon (bboxString) {
+    var bbox = bboxString.split(',').map(function (b) {
+        return parseInt(b, 10);
+    });
+    return turf.bboxPolygon(bbox);
+}
 
 var lineLayer = {
     "id": "line",
@@ -56,21 +67,34 @@ map.on('style.load', function () {
     socket.on('data', function (d) {
         var feature = JSON.parse(d.data);
         if (feature.geometry && feature.geometry.type) {
-            queue.push(feature);
-            if (first) {
+            if (bbox) {
+                if (turf.inside(feature, bbox)) {
+                    queue.push(feature);
+                }
+            } else {
+                queue.push(feature);
+            }
+            if (queue.length && first) {
                 first = false;
-                map.fire('moveend');
+                $('#map').removeClass('loading');
+                map.fire('moveend', {'mapbeat': true});
             }
         }
     });
 
-    map.on('moveend', function () {
-        setTimeout(function () {
-            var bbox = turf.extent(queue[0]);
-            var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
-            map.fitBounds(bounds, {linear: true, maxZoom: 17});
-            dataSource.setData(queue[0]);
-            queue.splice(0, 1);
-        }, 2000);
+    map.on('moveend', function (eventData) {
+        if (eventData.hasOwnProperty('mapbeat')) {
+            setTimeout(function () {
+                var f = queue[0];
+                var bbox = turf.extent(f);
+                var time = moment(Number(f.properties['osm:timestamp'])).fromNow();
+                var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
+                map.fitBounds(bounds, {linear: true, maxZoom: 17}, {'mapbeat': true});
+                $('.info').removeClass('hidden');
+                $('#description').text(f.properties['osm:user'] + ' edited the map ' + time);
+                dataSource.setData(f);
+                queue.splice(0, 1);
+            }, 3000);
+        }
     });
 });

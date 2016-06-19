@@ -1,3 +1,5 @@
+// Websocket server that listens to GeoJSON stream of changes in OpenStreetMap and broadcasts to clients.
+
 var app = require('express')();
 var bodyParser = require('body-parser');
 var http = require('http').Server(app);

@@ -1,3 +1,5 @@
+// Websocket client that connect to the stream server and render changes on a map.
+
 var socket = io('https://mapbeat-lambda-staging.tilestream.net:443');
 var queue = [];
 var first = true;

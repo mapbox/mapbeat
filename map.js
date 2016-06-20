@@ -92,7 +92,11 @@ map.on('style.load', function () {
                     var bounds = [[bbox[0], bbox[1]], [bbox[2], bbox[3]]];
                     map.fitBounds(bounds, {linear: true, maxZoom: 17}, {'mapbeat': true});
                     $('.info').removeClass('hidden');
-                    $('#description').text(f.properties['osm:user'] + ' edited the map ' + time);
+                    if (f.properties['place_name']) {
+                        $('#description').text(f.properties['osm:user'] + ' edited the map ' + time + ' in ' + f.properties['place_name']);
+                    } else {
+                        $('#description').text(f.properties['osm:user'] + ' edited the map ' + time);
+                    }
                     dataSource.setData(f);
                     queue.splice(0, 1);
                 }

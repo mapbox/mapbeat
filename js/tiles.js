@@ -1,4 +1,5 @@
-// Websocket client that connect to the stream server and render changes on a map.
+// Websocket client that connect to the stream server and render changes on a z7 tiled map.
+// This script and node libraries used are built into dist/build.js using browserify and served in tiles.html.
 
 var cover = require('tile-cover');
 var socket = io('https://mapbeat-lambda-staging.tilestream.net:443');
@@ -13,7 +14,6 @@ var map = new mapboxgl.Map({
     zoom: 1.5 // starting zoom,
 });
 
-// var dataSource = new mapboxgl.GeoJSONSource({});
 var tileSource = {
     "type": "vector",
     "url": "mapbox://geohacker.aeh6ayo2"
@@ -48,7 +48,7 @@ var onLayer = {
     "source-layer": "z7",
     "paint": {
         "fill-color": "red",
-        "fill-outline-color": "white"
+        "fill-outline-color": "red"
     },
     "filter": ["==", "index", ""]
 };
@@ -67,34 +67,20 @@ map.on('style.load', function () {
             var f = getTile(feature);
             if (bbox) {
                 if (turf.inside(f, bbox)) {
-                    // show(f);
                     queue.push(f);
                 }
             } else {
-                // show(f);
                 queue.push(f);
             }
             if (first) {
                 first = false;
-                // map.fire('mapbeat');
-                // show(queue[0]);
                 show(queue.splice(0, 3));
             }
         }
     });
 
-    // function show(d) {
-    //     var filter = ["all"];
-    //     var tiles = d.properties.tiles;
-    //     tiles.forEach(function (t) {
-    //         var index = t.join(',');
-    //         var f = ["==", "index", index];
-    //         filter.push(f);
-    //     });
-    //     map.setFilter("onlayer", filter);
-    // }
     function show(data) {
-        var filter = ["all"];
+        var filter = ["any"];
         data.forEach(function (d) {
             var tiles = d.properties.tiles;
             tiles.forEach(function (t) {
@@ -106,18 +92,13 @@ map.on('style.load', function () {
         map.setFilter("onlayer", filter);
     }
 
-    // map.on('mapbeat', function () {
-    //     show(queue.splice(0, 1));
-    // });
     setInterval(function() {
         if (queue.length) {
-            show(queue.splice(0, 3));
-            // queue.splice(0, 1);
+            show(queue.splice(0, 10));
         } else {
             map.setFilter('onlayer', ['==', 'index', ""]);
         }
-        // map.fire('mapbeat');
-    }, 100);
+    }, 200);
 });
 
 function getTile(feature) {

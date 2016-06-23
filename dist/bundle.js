@@ -49,7 +49,7 @@ var onLayer = {
     "source-layer": "z7",
     "paint": {
         "fill-color": "red",
-        "fill-outline-color": "white"
+        "fill-outline-color": "red"
     },
     "filter": ["==", "index", ""]
 };
@@ -95,7 +95,7 @@ map.on('style.load', function () {
     //     map.setFilter("onlayer", filter);
     // }
     function show(data) {
-        var filter = ["all"];
+        var filter = ["any"];
         data.forEach(function (d) {
             var tiles = d.properties.tiles;
             tiles.forEach(function (t) {
@@ -112,13 +112,13 @@ map.on('style.load', function () {
     // });
     setInterval(function() {
         if (queue.length) {
-            show(queue.splice(0, 3));
+            show(queue.splice(0, 10));
             // queue.splice(0, 1);
         } else {
             map.setFilter('onlayer', ['==', 'index', ""]);
         }
         // map.fire('mapbeat');
-    }, 100);
+    }, 200);
 });
 
 function getTile(feature) {

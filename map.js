@@ -99,8 +99,21 @@ map.on('style.load', function () {
                     }
                     dataSource.setData(f);
                     queue.splice(0, 1);
+
+                    if (queue.length === 0) {
+                        first =  true;
+                    }
                 }
             }, 3000);
         }
     });
+
+    setInterval(function () {
+        if (queue.length) {
+
+            // remove length - 50, leaving only new 50 items in the queue.
+            console.log('fast forwarding');
+            queue.splice(50);
+        }
+    }, 120000);
 });

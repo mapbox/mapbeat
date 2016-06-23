@@ -98,7 +98,7 @@ map.on('style.load', function () {
         } else {
             map.setFilter('onlayer', ['==', 'index', ""]);
         }
-    }, 200);
+    }, 50);
 });
 
 function getTile(feature) {

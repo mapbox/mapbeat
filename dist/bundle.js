@@ -81,22 +81,30 @@ map.on('style.load', function () {
     });
 
     function show(data) {
+        if (data.length === 0) {
+            $('.info').addClass('hidden');
+        }
         var filter = ["any"];
         var usernames = '';
         var tags = '';
         data.forEach(function (d) {
             var featureTagKeys = Object.keys(d.properties).filter(function(key) {
-                return key.indexOf('osm') === -1;
+                if (key.indexOf('osm') !== -1 || key.indexOf('tiles') !== -1) {
+                    return false;
+                } else {
+                    return true;
+                }
             });
             var tiles = d.properties.tiles;
-            usernames = usernames + '<br/>' + d.properties['osm:user'];
-            tags = tags + featureTagKeys.join('<br/>');
+            usernames = usernames + '<br>' + d.properties['osm:user'];
+            tags = tags + '<br>' +featureTagKeys.join('\n');
             tiles.forEach(function (t) {
                 var index = t.join(',');
                 var f = ["==", "index", index];
                 filter.push(f);
             });
         });
+        $('.info').removeClass('hidden');
         $('#description').html(usernames);
         $('#tags').html(tags);
         map.setFilter("onlayer", filter);

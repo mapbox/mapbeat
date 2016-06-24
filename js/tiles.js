@@ -81,14 +81,23 @@ map.on('style.load', function () {
 
     function show(data) {
         var filter = ["any"];
+        var usernames = '';
+        var tags = '';
         data.forEach(function (d) {
+            var featureTagKeys = Object.keys(d.properties).filter(function(key) {
+                return key.indexOf('osm') === -1;
+            });
             var tiles = d.properties.tiles;
+            usernames = usernames + '<br/>' + d.properties['osm:user'];
+            tags = tags + featureTagKeys.join('<br/>');
             tiles.forEach(function (t) {
                 var index = t.join(',');
                 var f = ["==", "index", index];
                 filter.push(f);
             });
         });
+        $('#description').html(usernames);
+        $('#tags').html(tags);
         map.setFilter("onlayer", filter);
     }
 

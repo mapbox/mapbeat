@@ -5,11 +5,61 @@ var cover = require('tile-cover');
 var socket = io('https://mapbeat-lambda-staging.tilestream.net:443');
 var queue = [];
 var first = true;
+var params = URI.parseQuery(window.location.search);
+var style = params.style || 'dark';
+var colors = {
+    'dark': {
+        'style': 'mapbox://styles/geohacker/cipskrw39002lb9m9jsph8atl',
+        'offlayer': {
+            'fill-color': 'black',
+            'fill-outline-color': '#3b3b3b'
+        },
+        'onlayer': {
+            'fill-color': '#86fd89',
+            'fill-outline-color': '#86fd89'
+        }
+    },
+    'light': {
+        'style': 'mapbox://styles/geohacker/cipp7whj7003ldfm1oqhxh1yg',
+        'offlayer': {
+            'fill-color': '#d7dce7',
+            'fill-outline-color': 'white'
+        },
+        'onlayer': {
+            'fill-color': 'red',
+            'fill-outline-color': 'red'
+        }
+    }
+};
+
+var offLayer = {
+    "id": "offlayer",
+    "type": "fill",
+    "source": "data",
+    "source-layer": "z7",
+    "paint": {
+        "fill-color": colors[style]['offlayer']['fill-color'],
+        "fill-outline-color": colors[style]['offlayer']['fill-outline-color']
+    }
+};
+
+
+var onLayer = {
+    "id": "onlayer",
+    "type": "fill",
+    "source": "data",
+    "source-layer": "z7",
+    "paint": {
+        "fill-color": colors[style]['onlayer']['fill-color'],
+        "fill-outline-color": colors[style]['onlayer']['fill-outline-color']
+    },
+    "filter": ["==", "index", ""]
+};
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvaGFja2VyIiwiYSI6ImFIN0hENW8ifQ.GGpH9gLyEg0PZf3NPQ7Vrg';
 var map = new mapboxgl.Map({
     container: 'map', // container id
-    style: 'mapbox://styles/geohacker/cipp7whj7003ldfm1oqhxh1yg', //stylesheet location
+    style: colors[style]['style'], //stylesheet location
     center: [6.68, 19.73], // starting position
     zoom: 1.5 // starting zoom,
 });
@@ -29,33 +79,8 @@ function getPolygon (bboxString) {
     return turf.bboxPolygon(bbox);
 }
 
-var offLayer = {
-    "id": "offlayer",
-    "type": "fill",
-    "source": "data",
-    "source-layer": "z7",
-    "paint": {
-        "fill-color": "#d7dce7",
-        "fill-outline-color": "white"
-    }
-};
-
-
-var onLayer = {
-    "id": "onlayer",
-    "type": "fill",
-    "source": "data",
-    "source-layer": "z7",
-    "paint": {
-        "fill-color": "red",
-        "fill-outline-color": "red"
-    },
-    "filter": ["==", "index", ""]
-};
-
-
 map.on('style.load', function () {
-    console.log('map.style', map.style);
+    $('.info').addClass(style);
     map.addSource('data', tileSource);
     map.addLayer(offLayer);
     map.addLayer(onLayer);

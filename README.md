@@ -20,3 +20,7 @@ To see the features on a map - go to index.html in your browser. The map will sh
 ##### Tiles
 
 If you go to tiles.html, the map will show the world divided into zoom 7 tiles, the tiles will light up when a feature in that tile is changed. The code is in js/tiles.js and is built using browserify into dist/bundle.js. You can see the map in light or dark variants. Just pass a `style` query parameter, like https://mapbox.com/mapbeat/tiles.html?style=light. The default is dark.
+
+If you pass `beat=true` query parameter in the URL, each change will make a beat based on the coordinates.
+
+![mapbeat](https://cloud.githubusercontent.com/assets/371666/16336544/f5667ad6-3a2b-11e6-988e-0e85289a6ef3.gif)

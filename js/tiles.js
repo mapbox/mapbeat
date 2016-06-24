@@ -3,8 +3,10 @@
 
 var cover = require('tile-cover');
 var socket = io('https://mapbeat-lambda-staging.tilestream.net:443');
+var turfCentroid = require('turf-centroid');
 var queue = [];
 var first = true;
+
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvaGFja2VyIiwiYSI6ImFIN0hENW8ifQ.GGpH9gLyEg0PZf3NPQ7Vrg';
 var map = new mapboxgl.Map({
@@ -79,10 +81,30 @@ map.on('style.load', function () {
         }
     });
 
+    var t = new track();
     function show(data) {
         var filter = ["any"];
         var usernames = '';
         var tags = '';
+        // var firstFeatureCentroid = turf.centroid(data[0]);
+        // var lat = Math.floor(firstFeatureCentroid.geometry.coordinates[0]);
+        // var lng = Math.floor(firstFeatureCentroid.geometry.coordinates[1]);
+        // t.tri().beat(2).notes(lat,lng);
+        var centroids = data.map(function(feature) {
+            var centroid = turfCentroid(feature);
+            return [centroid.geometry.coordinates[0], centroid.geometry.coordinates[1]];
+        }).reduce(function(memo, val, index, array) {
+            var lng = (110 / 180) * val[0];
+            var lat = (110 / 90) * val[1];
+            memo.push(Math.abs(Math.round(lng)));
+            memo.push(Math.abs(Math.round(lat)));
+            return memo;
+        }, []);
+        t.sample();
+        clock.tempo = data.length * 20;
+        // console.log(centroids);
+        t.beat32(2,2).notes.apply(t, centroids);
+
         data.forEach(function (d) {
             var featureTagKeys = Object.keys(d.properties).filter(function(key) {
                 return key.indexOf('osm') === -1;
@@ -107,7 +129,7 @@ map.on('style.load', function () {
         } else {
             map.setFilter('onlayer', ['==', 'index', ""]);
         }
-    }, 50);
+    }, 10);
 });
 
 function getTile(feature) {

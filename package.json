@@ -22,6 +22,7 @@
     "fastlog": "^1.1.0",
     "http": "0.0.0",
     "socket.io": "^1.4.6",
-    "tile-cover": "^3.0.1"
+    "tile-cover": "^3.0.1",
+    "turf-centroid": "^3.0.10"
   }
 }

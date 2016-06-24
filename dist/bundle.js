@@ -8,8 +8,6 @@ var queue = [];
 var first = true;
 var params = URI.parseQuery(window.location.search);
 var style = params.style || 'dark';
-
-console.log(style);
 var colors = {
     'dark': {
         'style': 'mapbox://styles/geohacker/cipskrw39002lb9m9jsph8atl',
@@ -34,7 +32,6 @@ var colors = {
         }
     }
 };
-console.log(colors[style]);
 
 var offLayer = {
     "id": "offlayer",
@@ -84,7 +81,6 @@ function getPolygon (bboxString) {
 }
 
 map.on('style.load', function () {
-    console.log('map.style', map.style);
     $('.info').addClass(style);
     map.addSource('data', tileSource);
     map.addLayer(offLayer);
@@ -109,6 +105,9 @@ map.on('style.load', function () {
         }
     });
 
+    if (params.beat === 'true') {
+        var t = new track();
+    }
     function show(data) {
         if (data.length === 0) {
             $('.info').addClass('hidden');
@@ -116,6 +115,25 @@ map.on('style.load', function () {
         var filter = ["any"];
         var usernames = '';
         var tags = '';
+
+        // for handling beats
+        if (params.beat === 'true') {
+            var centroids = data.map(function(feature) {
+                var centroid = turf.centroid(feature);
+                return [centroid.geometry.coordinates[0], centroid.geometry.coordinates[1]];
+            }).reduce(function(memo, val, index, array) {
+                var lng = (110 / 180) * val[0];
+                var lat = (110 / 90) * val[1];
+                memo.push(Math.abs(Math.round(lng)));
+                memo.push(Math.abs(Math.round(lat)));
+                return memo;
+            }, []);
+            t.sample();
+            clock.tempo = data.length * 20;
+            // console.log(centroids);
+            t.beat32(2,2).notes.apply(t, centroids);
+        }
+
         data.forEach(function (d) {
             var featureTagKeys = Object.keys(d.properties).filter(function(key) {
                 if (key.indexOf('osm') !== -1 || key.indexOf('tiles') !== -1) {
@@ -145,7 +163,7 @@ map.on('style.load', function () {
         } else {
             map.setFilter('onlayer', ['==', 'index', ""]);
         }
-    }, 50);
+    }, 10);
 });
 
 function getTile(feature) {

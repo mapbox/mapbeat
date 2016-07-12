@@ -103,4 +103,13 @@ map.on('style.load', function () {
             }, 3000);
         }
     });
+
+    // setInterval(function () {
+    //     if (queue.length) {
+
+    //         // remove length - 50, leaving only new 50 items in the queue.
+    //         console.log('fast forwarding');
+    //         queue.splice(50);
+    //     }
+    // }, 120000);
 });

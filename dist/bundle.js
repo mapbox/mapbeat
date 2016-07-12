@@ -70,7 +70,6 @@ var tileSource = {
     "url": "mapbox://geohacker.aeh6ayo2"
 };
 
-var params = URI.parseQuery(window.location.search);
 var bbox = params.bbox ? getPolygon(params.bbox) : false;
 
 function getPolygon (bboxString) {
@@ -88,21 +87,23 @@ map.on('style.load', function () {
 
     socket.on('data', function (d) {
         $('#map').removeClass('loading');
-        var feature = JSON.parse(d.data);
-        if (feature.type && feature.geometry) {
-            var f = getTile(feature);
-            if (bbox) {
-                if (turf.inside(f, bbox)) {
+        var features = JSON.parse(d.data);
+        features.forEach(function (feature) {
+            if (feature.type && feature.geometry) {
+                var f = getTile(feature);
+                if (bbox) {
+                    if (turf.inside(f, bbox)) {
+                        queue.push(f);
+                    }
+                } else {
                     queue.push(f);
                 }
-            } else {
-                queue.push(f);
+                if (first) {
+                    first = false;
+                    show(queue.splice(0, 3));
+                }
             }
-            if (first) {
-                first = false;
-                show(queue.splice(0, 3));
-            }
-        }
+        });
     });
 
     if (params.beat === 'true') {

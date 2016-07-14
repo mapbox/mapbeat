@@ -70,16 +70,6 @@ var tileSource = {
     "url": "mapbox://geohacker.aeh6ayo2"
 };
 
-var params = URI.parseQuery(window.location.search);
-var bbox = params.bbox ? getPolygon(params.bbox) : false;
-
-function getPolygon (bboxString) {
-    var bbox = bboxString.split(',').map(function (b) {
-        return parseInt(b, 10);
-    });
-    return turf.bboxPolygon(bbox);
-}
-
 map.on('style.load', function () {
     $('.info').addClass(style);
     map.addSource('data', tileSource);
@@ -88,21 +78,14 @@ map.on('style.load', function () {
 
     socket.on('data', function (d) {
         $('#map').removeClass('loading');
-        var feature = JSON.parse(d.data);
-        if (feature.type && feature.geometry) {
-            var f = getTile(feature);
-            if (bbox) {
-                if (turf.inside(f, bbox)) {
-                    queue.push(f);
-                }
-            } else {
-                queue.push(f);
-            }
+        var features = JSON.parse(d.data);
+        features.forEach(function (feature) {
+            queue.push(feature);
             if (first) {
                 first = false;
-                show(queue.splice(0, 3));
+                show(queue.splice(0, 5));
             }
-        }
+        });
     });
 
     if (params.beat === 'true') {
@@ -117,34 +100,27 @@ map.on('style.load', function () {
         var tags = '';
 
         // for handling beats
-        if (params.beat === 'true') {
-            var centroids = data.map(function(feature) {
-                var centroid = turf.centroid(feature);
-                return [centroid.geometry.coordinates[0], centroid.geometry.coordinates[1]];
-            }).reduce(function(memo, val, index, array) {
-                var lng = (110 / 180) * val[0];
-                var lat = (110 / 90) * val[1];
-                memo.push(Math.abs(Math.round(lng)));
-                memo.push(Math.abs(Math.round(lat)));
-                return memo;
-            }, []);
-            t.sample();
-            clock.tempo = data.length * 20;
-            // console.log(centroids);
-            t.beat32(2,2).notes.apply(t, centroids);
-        }
+        // if (params.beat === 'true') {
+        //     var centroids = data.map(function(feature) {
+        //         var centroid = turf.centroid(feature);
+        //         return [centroid.geometry.coordinates[0], centroid.geometry.coordinates[1]];
+        //     }).reduce(function(memo, val, index, array) {
+        //         var lng = (110 / 180) * val[0];
+        //         var lat = (110 / 90) * val[1];
+        //         memo.push(Math.abs(Math.round(lng)));
+        //         memo.push(Math.abs(Math.round(lat)));
+        //         return memo;
+        //     }, []);
+        //     t.sample();
+        //     clock.tempo = data.length * 20;
+        //     // console.log(centroids);
+        //     t.beat32(2,2).notes.apply(t, centroids);
+        // }
 
         data.forEach(function (d) {
-            var featureTagKeys = Object.keys(d.properties).filter(function(key) {
-                if (key.indexOf('osm') !== -1 || key.indexOf('tiles') !== -1) {
-                    return false;
-                } else {
-                    return true;
-                }
-            });
-            var tiles = d.properties.tiles;
-            usernames = usernames + '<br>' + d.properties['osm:user'];
-            tags = tags + '<br>' +featureTagKeys.join('\n');
+            var tiles = d.tiles;
+            usernames = usernames + '<br>' + d.user;
+            tags = tags + '<br>' +d.tags.join('\n');
             tiles.forEach(function (t) {
                 var index = t.join(',');
                 var f = ["==", "index", index];
@@ -159,11 +135,12 @@ map.on('style.load', function () {
 
     setInterval(function() {
         if (queue.length) {
-            show(queue.splice(0, 10));
+            show(queue.splice(0, 5));
         } else {
+            $('.info').addClass('hidden');
             map.setFilter('onlayer', ['==', 'index', ""]);
         }
-    }, 10);
+    }, 300);
 });
 
 function getTile(feature) {

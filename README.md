@@ -20,9 +20,3 @@ If you go to index.html, the map will show the world divided into zoom 7 tiles, 
 If you pass `beat=true` query parameter in the URL, each change will make a beat based on the coordinates.
 
 ![mapbeat](https://cloud.githubusercontent.com/assets/371666/16336544/f5667ad6-3a2b-11e6-988e-0e85289a6ef3.gif)
-
-##### Map
-
-To see the features on a map - go to map.html in your browser. The map will show each feature, one after the other. You can filter for changes happening in a bounding box by passing a `bbox` (xMin, yMin, xMax, yMax) query parameter in the URL. Like https://mapbox.com/mapbeat/map.html?bbox=55.28,-7.78,108.72,46.17
-
-

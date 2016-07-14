@@ -65,21 +65,23 @@ map.on('style.load', function () {
     map.addLayer(pointLayer);
 
     socket.on('data', function (d) {
-        var feature = JSON.parse(d.data);
-        if (feature.type && feature.geometry) {
-            if (bbox) {
-                if (turf.inside(feature, bbox)) {
+        var features = JSON.parse(d.data);
+        features.forEach(function (feature) {
+            if (feature.type && feature.geometry) {
+                if (bbox) {
+                    if (turf.inside(feature, bbox)) {
+                        queue.push(feature);
+                    }
+                } else {
                     queue.push(feature);
                 }
-            } else {
-                queue.push(feature);
+                if (queue.length && first) {
+                    first = false;
+                    $('#map').removeClass('loading');
+                    map.fire('moveend', {'mapbeat': true});
+                }
             }
-            if (queue.length && first) {
-                first = false;
-                $('#map').removeClass('loading');
-                map.fire('moveend', {'mapbeat': true});
-            }
-        }
+        });
     });
 
     map.on('moveend', function (eventData) {

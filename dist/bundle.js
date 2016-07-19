@@ -135,12 +135,12 @@ map.on('style.load', function () {
 
     setInterval(function() {
         if (queue.length) {
-            show(queue.splice(0, 5));
+            show(queue.splice(0, 2));
         } else {
             $('.info').addClass('hidden');
             map.setFilter('onlayer', ['==', 'index', ""]);
         }
-    }, 300);
+    }, 600);
 });
 
 function getTile(feature) {

@@ -140,7 +140,7 @@ map.on('style.load', function () {
             $('.info').addClass('hidden');
             map.setFilter('onlayer', ['==', 'index', ""]);
         }
-    }, 300);
+    }, 600);
 });
 
 function getTile(feature) {

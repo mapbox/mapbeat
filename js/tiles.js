@@ -134,7 +134,7 @@ map.on('style.load', function () {
 
     setInterval(function() {
         if (queue.length) {
-            show(queue.splice(0, 2));
+            show(queue.splice(0, 5));
         } else {
             $('.info').addClass('hidden');
             map.setFilter('onlayer', ['==', 'index', ""]);

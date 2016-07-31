@@ -1,6 +1,7 @@
 // Websocket client that connect to the stream server and render changes on a z7 tiled map.
 // This script and node libraries used are built into dist/build.js using browserify and served in tiles.html.
 
+var _ = require('lodash');
 var cover = require('tile-cover');
 var socket = io('https://mapbeat-lambda-staging.tilestream.net:443');
 var queue = [];
@@ -95,8 +96,9 @@ map.on('style.load', function () {
             $('.info').addClass('hidden');
         }
         var filter = ["any"];
-        var usernames = '';
-        var tags = '';
+        var usernames = [];
+        var tags = [];
+        var countries = [];
 
         // for handling beats
         // if (params.beat === 'true') {
@@ -117,18 +119,27 @@ map.on('style.load', function () {
         // }
 
         data.forEach(function (d) {
+            if (d.country) {
+                usernames.push(d.user + ', '+ d.country);
+            } else {
+                usernames.push(d.user);
+            }
+            tags.push(d.tags);
+
             var tiles = d.tiles;
-            usernames = usernames + '<br>' + d.user;
-            tags = tags + '<br>' +d.tags.join('\n');
             tiles.forEach(function (t) {
                 var index = t.join(',');
                 var f = ["==", "index", index];
                 filter.push(f);
             });
         });
+        var usernameString = _.uniq(usernames).join('<br>');
+        var tagString = _.uniq(_.flattenDeep(tags)).join('\n <br>');
+
         $('.info').removeClass('hidden');
-        $('#description').html(usernames);
-        $('#tags').html(tags);
+        $('#description').html(usernameString);
+        // $('#country').html(countries);
+        $('#tags').html(tagString);
         map.setFilter("onlayer", filter);
     }
 

@@ -99,7 +99,6 @@ map.on('style.load', function () {
         var filter = ["any"];
         var usernames = [];
         var tags = [];
-        var countries = [];
 
         // for handling beats
         // if (params.beat === 'true') {
@@ -139,7 +138,6 @@ map.on('style.load', function () {
 
         $('.info').removeClass('hidden');
         $('#description').html(usernameString);
-        // $('#country').html(countries);
         $('#tags').html(tagString);
         map.setFilter("onlayer", filter);
     }

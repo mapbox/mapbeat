@@ -90,7 +90,7 @@ map.on('style.load', function () {
     });
 
     if (params.beat === 'true') {
-        var t = new track();
+        var trk = new track();
     }
     function show(data) {
         if (data.length === 0) {
@@ -99,24 +99,6 @@ map.on('style.load', function () {
         var filter = ["any"];
         var usernames = [];
         var tags = [];
-
-        // for handling beats
-        // if (params.beat === 'true') {
-        //     var centroids = data.map(function(feature) {
-        //         var centroid = turf.centroid(feature);
-        //         return [centroid.geometry.coordinates[0], centroid.geometry.coordinates[1]];
-        //     }).reduce(function(memo, val, index, array) {
-        //         var lng = (110 / 180) * val[0];
-        //         var lat = (110 / 90) * val[1];
-        //         memo.push(Math.abs(Math.round(lng)));
-        //         memo.push(Math.abs(Math.round(lat)));
-        //         return memo;
-        //     }, []);
-        //     t.sample();
-        //     clock.tempo = data.length * 20;
-        //     // console.log(centroids);
-        //     t.beat32(2,2).notes.apply(t, centroids);
-        // }
 
         data.forEach(function (d) {
             if (d.country) {
@@ -130,6 +112,7 @@ map.on('style.load', function () {
             tiles.forEach(function (t) {
                 var index = t.join(',');
                 var f = ["==", "index", index];
+                beat(t, trk);
                 filter.push(f);
             });
         });
@@ -156,6 +139,16 @@ function getTile(feature) {
     var tiles = cover.tiles(feature.geometry, {min_zoom: 7, max_zoom: 7});
     feature.properties.tiles = tiles;
     return feature;
+}
+
+function beat(tile, trk) {
+    // for handling beats
+    if (params.beat === 'true') {
+        trk.sample();
+        clock.tempo = tile.length * 20;
+        trk.beat32(2,2).notes(1, tile[0], tile[1]);
+    }
+
 }
 },{"lodash":2,"tile-cover":3}],2:[function(require,module,exports){
 (function (global){

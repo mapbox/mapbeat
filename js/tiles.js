@@ -105,7 +105,10 @@ map.on('style.load', function () {
             } else {
                 usernames.push(d.user);
             }
-            tags.push(d.tags);
+            usernames = usernames.map(function(username) {
+                return strip(username);
+            });
+            tags.push(strip(d.tags));
 
             var tiles = d.tiles;
             tiles.forEach(function (t) {
@@ -148,4 +151,13 @@ function beat(tile, trk) {
         trk.beat32(2,2).notes(1, tile[0], tile[1]);
     }
 
+}
+
+/*
+    Simple function to strip HTML from text
+*/
+function strip(html) {
+   var tmp = document.createElement("DIV");
+   tmp.innerHTML = html;
+   return tmp.textContent||tmp.innerText;
 }

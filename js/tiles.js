@@ -62,7 +62,8 @@ var map = new mapboxgl.Map({
     container: 'map', // container id
     style: colors[style]['style'], //stylesheet location
     center: [6.68, 19.73], // starting position
-    zoom: 1.5 // starting zoom,
+    zoom: 1.5,
+    hash: true // starting zoom,
 });
 
 var tileSource = {

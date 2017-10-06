@@ -1,3 +1,5 @@
+![deprecated](https://c1.staticflickr.com/5/4396/36704337791_4268261089_n.jpg)
+
 # [mapbeat](https://mapbox.com/mapbeat) - OpenStreetMap changes, as they happen.
 
 A [websocket server](https://github.com/mapbox/mapbeat/blob/mb-pages/index.js) that listens to GeoJSON stream of changes in OpenStreetMap and broadcasts to [clients](https://github.com/mapbox/mapbeat/blob/mb-pages/map.js). The clients render this on a [Mapbox GL map](https://github.com/mapbox/mapbeat/blob/mb-pages/index.html).
